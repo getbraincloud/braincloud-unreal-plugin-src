@@ -146,7 +146,6 @@ class BCCLIENTPLUGIN_API BrainCloudRTT
 	void deregisterRTTBlockchainRefresh();
 
 	const FString &getRTTConnectionId() const;
-
 	BCRTTConnectionStatus getConnectionStatus();
 
   private:
