@@ -124,9 +124,18 @@ void BrainCloudClient::initialize(
 	_appVersion = appVersion;
 
 	if (_language.IsEmpty())
-		_language = FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
+		_language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
 	if (_country.IsEmpty())
-		_country = FInternationalization::Get().GetCurrentCulture()->GetRegion();
+		_country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
+    
+    FDateTime UTCTime = FDateTime::UtcNow();
+    FDateTime LocalTime = FDateTime::Now();
+    FTimespan offset = LocalTime - UTCTime;
+    
+    //UE_LOG(LogBrainCloud, Log, TEXT(), LocalTime.)
+    //UE_LOG(LogBrainCloud, Log, TEXT("just the offset: %i\n"), offset.GetHours());
+    
+    _timezoneOffset = offset.GetHours();
 }
 
 void BrainCloudClient::initializeWithApps(
