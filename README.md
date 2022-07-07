@@ -31,7 +31,9 @@ then right click on your .uproject and generate visual studio files.
 ### Git Submodule Installation
 BCClient plugin can be installed as a submodule of your git project.
 Open a terminal at your project's root folder and enter the command:
+
 $ git submodule add git@github.com:getbraincloud/braincloud-unreal-plugin-src.git Plugins/BCClient
+
 Follow steps 4-10 above.
 
 ## Example Projects
