@@ -124,9 +124,16 @@ void BrainCloudClient::initialize(
 	_appVersion = appVersion;
 
 	if (_language.IsEmpty())
-		_language = FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
+		_language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
 	if (_country.IsEmpty())
-		_country = FInternationalization::Get().GetCurrentCulture()->GetRegion();
+		_country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
+    
+    FDateTime UTCTime = FDateTime::UtcNow();
+    FDateTime LocalTime = FDateTime::Now();
+    FTimespan offset = LocalTime - UTCTime;
+    
+    // todo: adjust for daylightsavings
+    _timezoneOffset = offset.GetHours() + offset.GetMinutes()/60.0;
 }
 
 void BrainCloudClient::initializeWithApps(
@@ -162,10 +169,16 @@ void BrainCloudClient::initializeWithApps(
 	_appId = appId;
 	_appVersion = appVersion;
 
-	if (_language.IsEmpty())
-		_language = FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
-	if (_country.IsEmpty())
-		_country = FInternationalization::Get().GetCurrentCulture()->GetRegion();
+    if (_language.IsEmpty())
+        _language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
+    if (_country.IsEmpty())
+        _country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
+        
+    FDateTime UTCTime = FDateTime::UtcNow();
+    FDateTime LocalTime = FDateTime::Now();
+    FTimespan offset = LocalTime - UTCTime;
+    
+    _timezoneOffset = offset.GetHours() + offset.GetMinutes()/60.0;
 }
 
 void BrainCloudClient::initializeIdentity(const FString &profileId, const FString &anonymousId)
