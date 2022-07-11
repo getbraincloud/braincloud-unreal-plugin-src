@@ -266,7 +266,8 @@ void BrainCloudAuthentication::authenticate(
 	message->SetStringField(OperationParam::AuthenticateServiceAuthenticateAuthenticationToken.getValue(), authenticationToken);
 	message->SetStringField(OperationParam::AuthenticateServiceAuthenticateAuthenticationType.getValue(), BCAuthType::EnumToString(authenticationType));
 	message->SetBoolField(OperationParam::AuthenticateServiceAuthenticateForceCreate.getValue(), forceCreate);
-
+// compressResponses?
+    
 	message->SetStringField(OperationParam::AuthenticateServiceAuthenticateProfileId.getValue(), _profileId);
 	message->SetStringField(OperationParam::AuthenticateServiceAuthenticateAnonymousId.getValue(), _anonymousId);
 	message->SetStringField(OperationParam::AuthenticateServiceAuthenticateGameId.getValue(), brainCloudClientRef->getAppId());
@@ -284,7 +285,11 @@ void BrainCloudAuthentication::authenticate(
 	{
 		message->SetStringField(OperationParam::AuthenticateServiceAuthenticateExtraJson.getValue(), in_extraJson);
 	}
-
+    
+    message->SetStringField(OperationParam::AuthenticateServiceAuthenticateCountryCode.getValue(), brainCloudClientRef->getCountryCode());
+    message->SetStringField(OperationParam::AuthenticateServiceAuthenticateLanguageCode.getValue(), brainCloudClientRef->getLanguageCode());
+    message->SetNumberField(OperationParam::AuthenticateServiceAuthenticateTimeZoneOffset.getValue(), brainCloudClientRef->getTimezoneOffset());
+                                                                      
 	ServerCall *sc = new ServerCall(ServiceName::AuthenticateV2, ServiceOperation::Authenticate, message, callback);
 	brainCloudClientRef->sendRequest(sc);
 }

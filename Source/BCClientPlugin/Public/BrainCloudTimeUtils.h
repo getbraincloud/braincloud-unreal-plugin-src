@@ -14,7 +14,8 @@ class BCCLIENTPLUGIN_API BrainCloudTimeUtils
     static FDateTime UTCMillisToUTCDateTime(int64 utcDateTime);
     static FDateTime LocalTimeToUTCTime(FDateTime localDate);
     static FDateTime UTCTimeToLocalTime(FDateTime utcDate);
-      
+    static float UTCTimeZoneOffset();
+    
   private:
     BrainCloudClient *_client = nullptr;
 };

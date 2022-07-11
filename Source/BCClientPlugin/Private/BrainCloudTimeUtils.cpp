@@ -27,3 +27,45 @@ FDateTime BrainCloudTimeUtils::UTCTimeToLocalTime (FDateTime utcDate)
     return utcDate.Now();
 }
 
+/*
+ utility function to find timezone offset
+ uses tm and time_t structs
+ FDateTime are adjusted for daylight savings, localtime_r is not
+ tm.is_dst is positive if dst
+ */
+float BrainCloudTimeUtils::UTCTimeZoneOffset(){
+    // query for calendar time
+    struct timeval Time;
+    gettimeofday(&Time, NULL);
+    
+    // convert it to local time
+    struct tm loc;
+    localtime_r(&Time.tv_sec, &loc);
+
+    // convert it to UTC
+    struct tm utc;
+    gmtime_r(&Time.tv_sec, &utc);
+    
+    time_t localTime, utcTime;
+    localTime = mktime(&loc);
+    utcTime = mktime(&utc);
+
+    float hours, minutes, seconds, full, offset;
+
+    // find the time difference between local and utc
+    seconds = difftime(localTime, utcTime);
+
+    full = abs(seconds) / 3600.0;
+    hours = floor(full);
+    minutes = full - hours;
+    
+    minutes = round(minutes * 4.0) * 0.25; // round to nearest quarter hour just in case
+    
+    offset = hours + minutes;
+    
+    if(seconds < 0){
+        offset *= -1.0;
+    }
+    
+    return offset;
+}
