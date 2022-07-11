@@ -4,6 +4,7 @@
 #include "BrainCloudClient.h"
 #include "BCClientPluginPrivatePCH.h"
 #include "GameDelegates.h"
+#include "BrainCloudTimeUtils.h"
 #include "BrainCloudComms.h"
 #include "BrainCloudRTTComms.h"
 #include "BrainCloudRelayComms.h"
@@ -128,12 +129,7 @@ void BrainCloudClient::initialize(
 	if (_country.IsEmpty())
 		_country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
     
-    FDateTime UTCTime = FDateTime::UtcNow();
-    FDateTime LocalTime = FDateTime::Now();
-    FTimespan offset = LocalTime - UTCTime;
-    
-    // todo: adjust for daylightsavings
-    _timezoneOffset = offset.GetHours() + offset.GetMinutes()/60.0;
+    _timezoneOffset = BrainCloudTimeUtils::UTCTimeZoneOffset();
 }
 
 void BrainCloudClient::initializeWithApps(
@@ -173,12 +169,8 @@ void BrainCloudClient::initializeWithApps(
         _language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
     if (_country.IsEmpty())
         _country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
-        
-    FDateTime UTCTime = FDateTime::UtcNow();
-    FDateTime LocalTime = FDateTime::Now();
-    FTimespan offset = LocalTime - UTCTime;
-    
-    _timezoneOffset = offset.GetHours() + offset.GetMinutes()/60.0;
+            
+    _timezoneOffset = BrainCloudTimeUtils::UTCTimeZoneOffset();
 }
 
 void BrainCloudClient::initializeIdentity(const FString &profileId, const FString &anonymousId)
