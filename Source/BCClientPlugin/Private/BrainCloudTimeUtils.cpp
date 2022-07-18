@@ -34,6 +34,7 @@ FDateTime BrainCloudTimeUtils::UTCTimeToLocalTime (FDateTime utcDate)
  tm.is_dst is positive if dst
  */
 float BrainCloudTimeUtils::UTCTimeZoneOffset(){
+/*
     // query for calendar time
     struct timeval Time;
     gettimeofday(&Time, NULL);
@@ -66,6 +67,17 @@ float BrainCloudTimeUtils::UTCTimeZoneOffset(){
     if(seconds < 0){
         offset *= -1.0;
     }
+    */
+
+    FDateTime UTCTime = FDateTime::UtcNow();
+    FDateTime LocalTime = FDateTime::Now();    
     
+    FTimespan span = LocalTime - UTCTime;
+
+    float offset = span.GetHours() + span.GetMinutes() / 60.0;
+
+    // todo: account for daylight savings
+    //UE_LOG(LogBrainCloud, Log, TEXT("timezone offset: %f\n"), offset);
+
     return offset;
 }
