@@ -4,6 +4,8 @@
 #include "BCClientPluginPrivatePCH.h"
 #include "BrainCloudWrapper.h"
 #include "BCWrapperProxy.h"
+#include "Internationalization/Text.h"
+#include "GenericPlatform/GenericPlatformMisc.h"
 
 BrainCloudTimeUtils::BrainCloudTimeUtils(BrainCloudClient *client) : _client(client){};
 
@@ -77,7 +79,12 @@ float BrainCloudTimeUtils::UTCTimeZoneOffset(){
     float offset = span.GetHours() + span.GetMinutes() / 60.0;
 
     // todo: account for daylight savings
-    //UE_LOG(LogBrainCloud, Log, TEXT("timezone offset: %f\n"), offset);
+    UE_LOG(LogBrainCloud, Log, TEXT("GetInvariantTimeZone() is %s"), *FString(FText::GetInvariantTimeZone()));  // Etc/Unknown
+    UE_LOG(LogBrainCloud, Log, TEXT("StrTimestamp() is %s"), *FString(FPlatformTime::StrTimestamp()));
+    UE_LOG(LogBrainCloud, Log, TEXT("ToIso8601() is %s"), *FString(LocalTime.ToIso8601()));
+    UE_LOG(LogBrainCloud, Log, TEXT("GetTimeZoneId() is %s"), *FString(FGenericPlatformMisc::GetTimeZoneId()));
+
+    //FInternationalization::Get().GetCurrentLocale()
 
     return offset;
 }
