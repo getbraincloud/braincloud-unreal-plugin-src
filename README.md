@@ -51,6 +51,8 @@ Ensure you have removed these functions from your blueprints before updating to 
 version of the plugin.  If you experience issues, roll back to to the previous version and
 ensure you have not missed removal of these deprecated calls.
 
+Note there is a defect that UTCTimeZoneOffset will be off for one hour in case of daylight savings due to limitations of UE Core API regarding DateTime.
+
 ## Troubleshooting
 
 Here are a few common errors that you may see on your first attempt to connect to brainCloud.
