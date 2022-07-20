@@ -7,6 +7,11 @@
 #include "Internationalization/Text.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
 
+#if PLATFORM_WINDOWS
+#include "timezoneapi.h"
+#endif
+
+
 BrainCloudTimeUtils::BrainCloudTimeUtils(BrainCloudClient *client) : _client(client){};
 
 int64 BrainCloudTimeUtils::UTCDateTimeToUTCMillis(FDateTime dateTime)
@@ -36,7 +41,7 @@ FDateTime BrainCloudTimeUtils::UTCTimeToLocalTime (FDateTime utcDate)
  tm.is_dst is positive if dst
  */
 float BrainCloudTimeUtils::UTCTimeZoneOffset(){
-/*
+    /*
     // query for calendar time
     struct timeval Time;
     gettimeofday(&Time, NULL);
@@ -70,7 +75,7 @@ float BrainCloudTimeUtils::UTCTimeZoneOffset(){
         offset *= -1.0;
     }
     */
-
+    
     FDateTime UTCTime = FDateTime::UtcNow();
     FDateTime LocalTime = FDateTime::Now();    
     
@@ -81,10 +86,36 @@ float BrainCloudTimeUtils::UTCTimeZoneOffset(){
     // todo: account for daylight savings
     UE_LOG(LogBrainCloud, Log, TEXT("GetInvariantTimeZone() is %s"), *FString(FText::GetInvariantTimeZone()));  // Etc/Unknown
     UE_LOG(LogBrainCloud, Log, TEXT("StrTimestamp() is %s"), *FString(FPlatformTime::StrTimestamp()));
-    UE_LOG(LogBrainCloud, Log, TEXT("ToIso8601() is %s"), *FString(LocalTime.ToIso8601()));
+    UE_LOG(LogBrainCloud, Log, TEXT("Local.ToIso8601() is %s"), *FString(LocalTime.ToIso8601()));
+    UE_LOG(LogBrainCloud, Log, TEXT("UTC.ToIso8601() is %s"), *FString(UTCTime.ToIso8601()));
     UE_LOG(LogBrainCloud, Log, TEXT("GetTimeZoneId() is %s"), *FString(FGenericPlatformMisc::GetTimeZoneId()));
+    UE_LOG(LogBrainCloud, Log, TEXT("ToUnixTimestamp() is %i"), LocalTime.ToUnixTimestamp());
+    UE_LOG(LogBrainCloud, Log, TEXT("IsInitialized() is %i"), FInternationalization::Get().IsInitialized());
+    //UE_LOG(LogBrainCloud, Log, TEXT("createDefault() is %s"), *FString(icu::TimeZone::createDefault()));
 
-    //FInternationalization::Get().GetCurrentLocale()
+
+#if PLATFORM_WINDOWS
+
+    DWORD dwRet;
+    TIME_ZONE_INFORMATION tziOld;
+    UE_LOG(LogBrainCloud, Log, TEXT("tzinfo is %f"), tziOld.Bias/60.0);
+
+    dwRet = GetTimeZoneInformation(&tziOld);
+
+    if (dwRet == 1 || dwRet == 0)
+    {
+        UE_LOG(LogBrainCloud, Log, TEXT("timezone is %s"), *FString(tziOld.StandardName));
+    }
+    else if (dwRet == 2)
+    {
+        UE_LOG(LogBrainCloud, Log, TEXT("timezone is %s"), *FString(tziOld.DaylightName));
+    }
+    else
+    {
+        UE_LOG(LogBrainCloud, Log, TEXT("GTZI failed (%d)"), GetLastError());
+    }
+
+#endif
 
     return offset;
 }
