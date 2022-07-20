@@ -4,6 +4,7 @@
 #include "BrainCloudClient.h"
 #include "BCClientPluginPrivatePCH.h"
 #include "GameDelegates.h"
+#include "BrainCloudTimeUtils.h"
 #include "BrainCloudComms.h"
 #include "BrainCloudRTTComms.h"
 #include "BrainCloudRelayComms.h"
@@ -20,7 +21,7 @@
 #include "BCPlatform.h"
 
 // Define all static member variables.
-FString BrainCloudClient::s_brainCloudClientVersion = TEXT("4.7.0");
+FString BrainCloudClient::s_brainCloudClientVersion = TEXT("4.12.0");
 
 ////////////////////////////////////////////////////
 // (De)Constructors
@@ -124,9 +125,11 @@ void BrainCloudClient::initialize(
 	_appVersion = appVersion;
 
 	if (_language.IsEmpty())
-		_language = FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
+		_language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
 	if (_country.IsEmpty())
-		_country = FInternationalization::Get().GetCurrentCulture()->GetRegion();
+		_country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
+    
+    _timezoneOffset = BrainCloudTimeUtils::UTCTimeZoneOffset();
 }
 
 void BrainCloudClient::initializeWithApps(
@@ -162,10 +165,12 @@ void BrainCloudClient::initializeWithApps(
 	_appId = appId;
 	_appVersion = appVersion;
 
-	if (_language.IsEmpty())
-		_language = FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
-	if (_country.IsEmpty())
-		_country = FInternationalization::Get().GetCurrentCulture()->GetRegion();
+    if (_language.IsEmpty())
+        _language = FInternationalization::Get().GetCurrentLanguage()->GetTwoLetterISOLanguageName();
+    if (_country.IsEmpty())
+        _country = FInternationalization::Get().GetCurrentLocale()->GetRegion();
+            
+    _timezoneOffset = BrainCloudTimeUtils::UTCTimeZoneOffset();
 }
 
 void BrainCloudClient::initializeIdentity(const FString &profileId, const FString &anonymousId)
